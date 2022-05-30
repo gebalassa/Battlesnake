@@ -25,10 +25,10 @@ private:
 		}
 	}
 
-    bool checkCollision(json tablero)
-    {
-    
-    }
+	bool checkCollision(json tablero) {
+		// COMPLETAR
+		return true;
+	}
 
 public:
 	Node(json _tablero, Node *_padre = nullptr)
@@ -43,22 +43,22 @@ public:
 
 		// Movimientos posibles del enemigo
 		int totalEnemigos = tablero["board"]["snakes"].size();
-        //cout << "BANANA: "<<totalEnemigos<<endl;
-        //cout << tablero["board"]["snakes"]<<endl;
+		// cout << "BANANA: "<<totalEnemigos<<endl;
+		// cout << tablero["board"]["snakes"]<<endl;
 
-        // 3 Movimientos posibles por cada enemigo
+		// 3 Movimientos posibles por cada enemigo
 		for (int i = 0; i < totalEnemigos; i++) {
 			json currSnake = tablero["board"]["snakes"][i];
-			//cout << currSnake["name"] << endl;
+			// cout << currSnake["name"] << endl;
 
-            // 3 Movimientos posibles
-            // ARRIBA
-            json nuevoTablero = tablero;
-            //cout << currSnake["head"]<<endl;
-            currSnake["head"]["y"] = (int)currSnake["head"]["y"] + 1;
-            nuevoTablero["board"]["snakes"][i]["head"]["y"] =
-                currSnake["head"]["y"];
-            // SEGUIR ACA******
+			// 3 Movimientos posibles
+			// ARRIBA
+			json nuevoTablero = tablero;
+			//cout << currSnake["head"]<<endl;
+			currSnake["head"]["y"] = (int)currSnake["head"]["y"] + 1;
+			nuevoTablero["board"]["snakes"][i]["head"]["y"] =
+				currSnake["head"]["y"];
+			// SEGUIR ACA******
 		}
 	}
 
