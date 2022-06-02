@@ -1,3 +1,25 @@
+## Sobre este proyecto:
+
+Por problemas logísticos el motor **no está, efectivamente, implementado** para esta entrega. De antemano pedimos disculpas y nos atenemos a las consecuencias, comprometiéndonos a tener el sistema correctamente implementado para la tercera entrega.
+
+Instrucciones de uso:
+
+- La serpiente, por lo menos, corre. Para ello, es necesario ejecutar este código en Replit (link de invitación: https://replit.com/join/vmxygxlyzn-gebalassa) y así activar un servidor, el cual enviará y recibirá instrucciones desde Battlesnake mediante una *URL*. De ejecutarse correctamente, se abrirá un *preview* encima de la consola mostrando la página con un pequeño diccionario *JSON*.
+- Para probar la serpiente, es necesario tener una cuenta en https://play.battlesnake.com/, y crear una partida estándar con *Create Game*. Allí es posible buscar y convocar nuestra serpiente, de color rojo, llamada "Lucius". Esperamos implementarla en un mapa "Medium" de 11x11, modo de juego **Standard** sin obstáculos (*hazards*), idealmente contra 1-3 serpientes enemigas (puede solicitarse cualquier serpiente disponible mediante el mismo sistema, incluyendo una al azar).
+- Si la serpiente muestra una **latencia** menor a 500ms y se mueve en más de una dirección, el servidor funciona.
+
+**PD**: Dado algún problema activando el servidor por favor no dudar en contactarnos en cualquier momento.
+
+
+
+
+
+
+
+
+
+
+
 # A simple [Battlesnake](http://play.battlesnake.com) written in C++ with Replit.
 
 This is a basic implementation of the [Battlesnake API](https://docs.battlesnake.com/snake-api). It's a great starting point for anyone wanting to program their first Battlesnake using C++. It comes ready to use with [Repl.it](https://repl.it) and provides instructions below for getting started.
