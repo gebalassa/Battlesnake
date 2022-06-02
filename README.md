@@ -10,6 +10,8 @@ Instrucciones de uso:
 
 **PD**: Dado algún problema activando el servidor por favor no dudar en contactarnos en cualquier momento.
 
+**PD2**: Para propósitos de la segunda entrega, ignorar commits posteriores a la fecha límite.
+
 ** **Lo de abajo corresponde al texto original base para ejecutar la serpiente en C++.** **
 
 

@@ -51,7 +51,6 @@ public:
 			json currSnake = tablero["board"]["snakes"][i];
 			// cout << currSnake["name"] << endl;
 
-			// 3 Movimientos posibles
 			// ARRIBA
 			json nuevoTablero = tablero;
 			//cout << currSnake["head"]<<endl;
