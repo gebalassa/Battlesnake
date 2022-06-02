@@ -10,6 +10,8 @@ Instrucciones de uso:
 
 **PD**: Dado algún problema activando el servidor por favor no dudar en contactarnos en cualquier momento.
 
+** **Lo de abajo corresponde al texto original base para ejecutar la serpiente en C++.** **
+
 
 
 
