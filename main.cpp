@@ -1,10 +1,10 @@
 // HTTP credits: http://lcs.ios.ac.cn/~maxt/SPelton/reports/report-9aa0d3.html
 // JSON credits: https://github.com/nlohmann/json
 #include "./http_stuff.h"
+using namespace std;
 #include "./json.hpp"
 #include "logic.cpp"
 #include <iostream>
-using namespace std;
 //using namespace nlohmann;
 
 int main(void) {

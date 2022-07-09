@@ -1,7 +1,5 @@
 ## Sobre este proyecto:
 
-Por problemas logísticos el motor **no está, efectivamente, implementado** para esta entrega. De antemano pedimos disculpas y nos atenemos a las consecuencias, comprometiéndonos a tener el sistema correctamente implementado para la tercera entrega.
-
 Instrucciones de uso:
 
 - La serpiente, por lo menos, corre. Para ello, es necesario ejecutar este código en Replit (link de invitación: https://replit.com/join/vmxygxlyzn-gebalassa) y así activar un servidor, el cual enviará y recibirá instrucciones desde Battlesnake mediante una *URL*. De ejecutarse correctamente, se abrirá un *preview* encima de la consola mostrando la página con un pequeño diccionario *JSON*.
@@ -10,19 +8,7 @@ Instrucciones de uso:
 
 **PD**: Dado algún problema activando el servidor por favor no dudar en contactarnos en cualquier momento.
 
-**PD2**: Para propósitos de la segunda entrega, ignorar commits posteriores a la fecha límite.
-
 ** **Lo de abajo corresponde al texto original base para ejecutar la serpiente en C++.** **
-
-
-
-
-
-
-
-
-
-
 
 # A simple [Battlesnake](http://play.battlesnake.com) written in C++ with Replit.
 
