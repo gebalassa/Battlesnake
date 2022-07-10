@@ -5,7 +5,7 @@
 using namespace std;
 using namespace nlohmann;
 
-// Nodos que formarán el MCST.
+// Nodos que formarán el MCTS.
 class Node {
 private:
 	int visitas;
@@ -25,11 +25,6 @@ private:
 		}
 	}
 
-	bool checkCollision(json tablero) {
-		// COMPLETAR
-		return true;
-	}
-
 public:
 	Node(json _tablero, Node *_padre = nullptr)
 		: tablero(_tablero), padre(_padre) {
@@ -44,14 +39,11 @@ public:
 		list<json> currentStates = {}; // Acá se agregan los tableros válidos
 		json nuevoTablero = tablero;   // Acá va cada tablero a agregar
 		int totalSerpientes = tablero["board"]["snakes"].size();
-        string listaMovimientos[4] = {"ARRIBA", "ABAJO", "DERECHA", "IZQUIERDA"};
-        
+
 		// Movimientos posibles por serpiente = 4
-        // Total de movimientos: 4^serpientes
+		// Total de movimientos: 4^serpientes
 		// ** El chequeo de validez y anti-suicida se hará después **
-		for (int i = 0; i < totalSerpientes; i++) {
-            
-		}
+		list<JSON> rawMovementStates = totalSnakeMovementsRaw(tablero);
 	}
 
 	// Funciones de COMPROBACIÓN/CHEQUEO
@@ -77,6 +69,8 @@ public:
 	}
 
 	// Chequeo colisión con cuello en cada serpiente
+	// ***ARREGLAR PARA QUE REVISE COLISION CON CUALQUIER CUERPO Y CUALQUIER
+	// SERPIeNTE***
 	bool chequearColisionCuello(json tablero) {
 		int totalSerpientes = tablero["board"]["snakes"].size();
 
@@ -93,10 +87,19 @@ public:
 		return true;
 	}
 
+	// Todos los movimientos brutos
+	list<json> totalSnakeMovementsRaw() {
+        list<json> movements = {};
+        //TERMINAR******
+
+        return movements;
+	}
+
 	// Retorna movimiento sin chequeos
 	json moveSnakeRaw(json tablero, json serpiente, string movimiento) {
 		// VARS
-		json prevTablero = tablero;	// Para guardar cambios definitivos
+		// json prevTablero = tablero;	// Para guardar cambios definitivos (*NO
+		// USADO*)
 		json postTablero = tablero;	// Para guardar cambios brutos
 		json initialSnake = serpiente; // Para devolverse
 		json currSnake = initialSnake; // Para cambios brutos serpiente
@@ -144,6 +147,8 @@ public:
 		// Remover cola
 		postTablero["board"]["snakes"][currSnakeIndex]["body"].erase(
 			postTablero["board"]["snakes"][currSnakeIndex]["body"].size() - 1);
+
+		return postTablero;
 	}
 
 	// DEBUGGEO/testeo del tablero JSON
