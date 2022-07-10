@@ -44,9 +44,11 @@ public:
 		// Total de movimientos: 4^serpientes
 		// ** El chequeo de validez y anti-suicida se hará después **
 		list<JSON> rawMovementStates = totalSnakeMovementsRaw(tablero);
+
+		// ***TERMINAR********
 	}
 
-	// Funciones de COMPROBACIÓN/CHEQUEO
+	// --------------Funciones de COMPROBACIÓN/CHEQUEO-----------------
 	// Chequeo de muros
 	bool chequearMuro(json tablero) {
 		int totalSerpientes = tablero["board"]["snakes"].size();
@@ -86,23 +88,59 @@ public:
 		}
 		return true;
 	}
+	//------------------FIN FUNCIONES CHEQUEO----------------------
 
-	// Todos los movimientos brutos
-	list<json> totalSnakeMovementsRaw() {
-        list<json> movements = {};
-        //TERMINAR******
+	// Todos los movimientos brutos desde el tablero actual, recursivamente
+	list<json> _totalSnakeMovementsRaw(json currTablero, int snakeIndex) {
+		// VARS
+		list<json> currMovs = {};
+		int totalSerpientes = currTablero["board"]["snakes"].size();
 
-        return movements;
+		// Realizar movimiento
+		json movs1 = moveSnakeRaw(currTablero, snakeIndex, "ARRIBA");
+		json movs2 = moveSnakeRaw(currTablero, snakeIndex, "ABAJO");
+		json movs3 = moveSnakeRaw(currTablero, snakeIndex, "IZQUIERDA");
+		json movs4 = moveSnakeRaw(currTablero, snakeIndex, "DERECHA");
+
+		// Paso a la siguiente serpiente
+		list<json> nextMovs1 = {}, nextMovs2 = {}, nextMovs3 = {},
+				   nextMovs4 = {};
+		if (snakeIndex < totalSerpientes - 1) { /*NO es hoja*/
+			nextMovs1 = _totalSnakeMovementsRaw(movs1, snakeIndex + 1);
+			nextMovs2 = _totalSnakeMovementsRaw(movs2, snakeIndex + 1);
+			nextMovs3 = _totalSnakeMovementsRaw(movs3, snakeIndex + 1);
+			nextMovs4 = _totalSnakeMovementsRaw(movs4, snakeIndex + 1);
+
+			// Unión de movimientos de esta rama
+			currMovs.assign(nextMovs1.begin(), nextMovs1.end());
+			currMovs.assign(nextMovs2.begin(), nextMovs2.end());
+			currMovs.assign(nextMovs3.begin(), nextMovs3.end());
+			currMovs.assign(nextMovs4.begin(), nextMovs4.end());
+
+			return currMovs;
+		} else { /*ES hoja*/
+			list<json> myMoves = {};
+			myMoves.push_back(movs1);
+			myMoves.push_back(movs2);
+			myMoves.push_back(movs3);
+			myMoves.push_back(movs4);
+			currMovs.assign(myMoves.begin(), myMoves.end());
+			return currMovs;
+		}
+	}
+	// Funcion contenedora
+	list<json> totalSnakeMovementsRaw(json tablero) {
+		list<json> movs = _totalSnakeMovementsRaw(tablero, 0);
+		if (debug) {
+			cout << "Tamano movimientos posibles raw: " << movs.size() << "\n";
+		}
+		return movs;
 	}
 
 	// Retorna movimiento sin chequeos
-	json moveSnakeRaw(json tablero, json serpiente, string movimiento) {
-		// VARS
-		// json prevTablero = tablero;	// Para guardar cambios definitivos (*NO
-		// USADO*)
-		json postTablero = tablero;	// Para guardar cambios brutos
-		json initialSnake = serpiente; // Para devolverse
-		json currSnake = initialSnake; // Para cambios brutos serpiente
+	json moveSnakeRaw(json tablero, json serpiente, string mov) {
+		json postTablero = tablero; // Para cambios tablero
+		json currSnake = serpiente; // Para cambios serpiente
 		int totalSerpientes = tablero["board"]["snakes"].size();
 
 		// Index de serpiente
@@ -118,21 +156,21 @@ public:
 
 		// Generar vector de movimiento correspondiente
 		int moveVector[2];
-		if (movimiento == "ARRIBA") {
+		if (mov == "ARRIBA") {
 			moveVector[0] = 0;
 			moveVector[1] = 1;
-		} else if (movimiento == "ABAJO") {
+		} else if (mov == "ABAJO") {
 			moveVector[0] = 0;
 			moveVector[1] = -1;
-		} else if (movimiento == "DERECHA") {
+		} else if (mov == "DERECHA") {
 			moveVector[0] = 1;
 			moveVector[1] = 0;
-		} else if (movimiento == "IZQUIERDA") {
+		} else if (mov == "IZQUIERDA") {
 			moveVector[0] = -1;
 			moveVector[1] = 0;
 		}
 
-		// Agregar nueva posicion cabeza
+		// Agregar nueva posicion cabeza en "head" y "body"
 		currSnake["head"]["y"] = (int)currSnake["head"]["x"] + moveVector[0];
 		currSnake["head"]["y"] = (int)currSnake["head"]["y"] + moveVector[1];
 
