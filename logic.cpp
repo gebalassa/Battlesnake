@@ -1,7 +1,7 @@
 #pragma once
 #include "./json.hpp"
 #include <iostream>
-#include <list>
+#include <vector>
 using namespace std;
 using namespace nlohmann;
 
@@ -11,10 +11,14 @@ private:
 	int visitas;
 	int puntuacion;
 	Node *padre;
-	list<Node> hijos;
+	vector<Node> hijos;
 	json tablero;
 	// DEBUGGING
 	bool debug = true;
+	bool debugCrearHijos = true;
+	bool debugTotalSnakeMovementsRaw = true;
+	bool debug_TotalSnakeMovementsRaw = false;
+	bool debugMoveSnakeRaw = false;
 
 	void crearHijo(json nuevoTablero) {
 		// Variables locales
@@ -36,14 +40,21 @@ public:
 	// Creación de hijos (movimientos posibles)
 	void crearHijos() {
 		// VARS
-		list<json> currentStates = {}; // Acá se agregan los tableros válidos
-		json nuevoTablero = tablero;   // Acá va cada tablero a agregar
+		vector<json> currentStates = {}; // Acá se agregan los tableros válidos
+		json nuevoTablero = tablero;	 // Acá va cada tablero a agregar
 		int totalSerpientes = tablero["board"]["snakes"].size();
-
+		if (debug && debugCrearHijos) {
+			cout << "Entrando a rawMovementStates. Serpientes: "
+				 << totalSerpientes << endl;
+		}
 		// Movimientos posibles por serpiente = 4
 		// Total de movimientos: 4^serpientes
 		// ** El chequeo de validez y anti-suicida se hará después **
-		list<JSON> rawMovementStates = totalSnakeMovementsRaw(tablero);
+		vector<json> rawMovementStates = totalSnakeMovementsRaw(tablero);
+		if (debug && debugCrearHijos) {
+			cout << "Salio de funcion rawMovementStates!!!"
+				 << "\n";
+		}
 
 		// ***TERMINAR********
 	}
@@ -91,20 +102,28 @@ public:
 	//------------------FIN FUNCIONES CHEQUEO----------------------
 
 	// Todos los movimientos brutos desde el tablero actual, recursivamente
-	list<json> _totalSnakeMovementsRaw(json currTablero, int snakeIndex) {
+	vector<json> _totalSnakeMovementsRaw(json currTablero, int snakeIndex) {
 		// VARS
-		list<json> currMovs = {};
+		vector<json> currMovs = {};
 		int totalSerpientes = currTablero["board"]["snakes"].size();
 
+		//------DEBUG--------------------
+		if (debug && debug_TotalSnakeMovementsRaw) {
+			cout << "_totalSnakeMovementsRaw. Serpientes: " << totalSerpientes
+				 << "\n";
+		}
+		//--------------------------FINDEBUG-------------
+
 		// Realizar movimiento
-		json movs1 = moveSnakeRaw(currTablero, snakeIndex, "ARRIBA");
-		json movs2 = moveSnakeRaw(currTablero, snakeIndex, "ABAJO");
-		json movs3 = moveSnakeRaw(currTablero, snakeIndex, "IZQUIERDA");
-		json movs4 = moveSnakeRaw(currTablero, snakeIndex, "DERECHA");
+		json currSnake = currTablero["board"]["snakes"][snakeIndex];
+		json movs1 = moveSnakeRaw(currTablero, currSnake, "ARRIBA");
+		json movs2 = moveSnakeRaw(currTablero, currSnake, "ABAJO");
+		json movs3 = moveSnakeRaw(currTablero, currSnake, "IZQUIERDA");
+		json movs4 = moveSnakeRaw(currTablero, currSnake, "DERECHA");
 
 		// Paso a la siguiente serpiente
-		list<json> nextMovs1 = {}, nextMovs2 = {}, nextMovs3 = {},
-				   nextMovs4 = {};
+		vector<json> nextMovs1 = {}, nextMovs2 = {}, nextMovs3 = {},
+					 nextMovs4 = {};
 		if (snakeIndex < totalSerpientes - 1) { /*NO es hoja*/
 			nextMovs1 = _totalSnakeMovementsRaw(movs1, snakeIndex + 1);
 			nextMovs2 = _totalSnakeMovementsRaw(movs2, snakeIndex + 1);
@@ -112,28 +131,47 @@ public:
 			nextMovs4 = _totalSnakeMovementsRaw(movs4, snakeIndex + 1);
 
 			// Unión de movimientos de esta rama
-			currMovs.assign(nextMovs1.begin(), nextMovs1.end());
-			currMovs.assign(nextMovs2.begin(), nextMovs2.end());
-			currMovs.assign(nextMovs3.begin(), nextMovs3.end());
-			currMovs.assign(nextMovs4.begin(), nextMovs4.end());
+			currMovs.insert(currMovs.end(), nextMovs1.begin(), nextMovs1.end());
+			currMovs.insert(currMovs.end(), nextMovs2.begin(), nextMovs2.end());
+			currMovs.insert(currMovs.end(), nextMovs3.begin(), nextMovs3.end());
+			currMovs.insert(currMovs.end(), nextMovs4.begin(), nextMovs4.end());
 
 			return currMovs;
 		} else { /*ES hoja*/
-			list<json> myMoves = {};
+			vector<json> myMoves = {};
 			myMoves.push_back(movs1);
 			myMoves.push_back(movs2);
 			myMoves.push_back(movs3);
 			myMoves.push_back(movs4);
-			currMovs.assign(myMoves.begin(), myMoves.end());
+			currMovs.insert(currMovs.end(), myMoves.begin(), myMoves.end());
 			return currMovs;
 		}
 	}
 	// Funcion contenedora
-	list<json> totalSnakeMovementsRaw(json tablero) {
-		list<json> movs = _totalSnakeMovementsRaw(tablero, 0);
-		if (debug) {
-			cout << "Tamano movimientos posibles raw: " << movs.size() << "\n";
+	vector<json> totalSnakeMovementsRaw(json tablero) {
+		//----------DEBUG PREV----------
+		if (debug && debugTotalSnakeMovementsRaw) {
+			cout << "CONTENEDORA. Entrando a _totalSnakeMovementsRaw. "
+					"Serpientes:"
+				 << tablero["board"]["snakes"].size() << "\n";
 		}
+		//------------CÓDIGO-----------------
+
+		vector<json> movs = _totalSnakeMovementsRaw(tablero, 0);
+
+		//----DEBUG POST------
+		if (debug && debugTotalSnakeMovementsRaw) {
+			cout << "CONTENEDORA. Tamano movimientos posibles raw: "
+				 << movs.size() << "\n";
+			for (int i = 0; i < movs.size(); i++) {
+				cout << "CONTENEDORA: Movimientos:"
+					 << "Movimiento " << i << ": " << endl
+					 << movs[i]["board"]["snakes"][0]["body"] << endl
+					 << movs[i]["board"]["snakes"][1]["body"] << endl;
+			}
+		}
+		//----------
+
 		return movs;
 	}
 
@@ -143,16 +181,37 @@ public:
 		json currSnake = serpiente; // Para cambios serpiente
 		int totalSerpientes = tablero["board"]["snakes"].size();
 
+		//---DEBUG---
+		if (debug && debugMoveSnakeRaw) {
+			cout << "moveSnakeRaw: Serp: " << totalSerpientes << "\n";
+			cout << "moveSnakeRaw: Mov: " << mov << "\n";
+			cout << "moveSnakeRaw: currSerp name: " << serpiente["name"]
+				 << endl;
+		}
+		//---FIN DEBUG---
+
 		// Index de serpiente
 		int currSnakeIndex;
 		for (int i = 0; i < totalSerpientes; i++) {
 			if (tablero["board"]["snakes"][i]["id"] == currSnake["id"]) {
+				//---DEBUG---
+				if (debug && debugMoveSnakeRaw) {
+					cout << "moveSnakeRaw:ID: "
+						 << tablero["board"]["snakes"][i]["id"] << endl;
+					cout << "moveSnakeRaw:currsnakeID: " << currSnake["id"]
+						 << endl;
+				}
+				//---FIN DEBUG---
 				currSnakeIndex = i;
 				break;
-			} else {
-				throw(-1);
 			}
 		}
+
+		//---DEBUG---
+		if (debug && debugMoveSnakeRaw) {
+			cout << "moveSnakeRaw: currSerp index: " << currSnakeIndex << "\n";
+		}
+		//---FIN DEBUG---
 
 		// Generar vector de movimiento correspondiente
 		int moveVector[2];
@@ -170,8 +229,22 @@ public:
 			moveVector[1] = 0;
 		}
 
+		//---DEBUG---
+		if (debug && debugMoveSnakeRaw) {
+			cout << "moveSnakeRaw: PREVcurrSnake head,x "
+				 << postTablero["board"]["snakes"][currSnakeIndex]["head"]["x"]
+				 << "\n";
+			cout << "moveSnakeRaw: PREVcurrSnake head,y "
+				 << postTablero["board"]["snakes"][currSnakeIndex]["head"]["y"]
+				 << "\n";
+			cout << "moveSnakeRaw: PREVcurrSnake BODY "
+				 << postTablero["board"]["snakes"][currSnakeIndex]["body"]
+				 << "\n";
+		}
+		//---FIN DEBUG---
+
 		// Agregar nueva posicion cabeza en "head" y "body"
-		currSnake["head"]["y"] = (int)currSnake["head"]["x"] + moveVector[0];
+		currSnake["head"]["x"] = (int)currSnake["head"]["x"] + moveVector[0];
 		currSnake["head"]["y"] = (int)currSnake["head"]["y"] + moveVector[1];
 
 		postTablero["board"]["snakes"][currSnakeIndex]["head"]["x"] =
@@ -185,6 +258,20 @@ public:
 		// Remover cola
 		postTablero["board"]["snakes"][currSnakeIndex]["body"].erase(
 			postTablero["board"]["snakes"][currSnakeIndex]["body"].size() - 1);
+
+		//---DEBUG---
+		if (debug && debugMoveSnakeRaw) {
+			cout << "moveSnakeRaw: POSTcurrSnake head,x "
+				 << postTablero["board"]["snakes"][currSnakeIndex]["head"]["x"]
+				 << "\n";
+			cout << "moveSnakeRaw: POSTcurrSnake head,y "
+				 << postTablero["board"]["snakes"][currSnakeIndex]["head"]["y"]
+				 << "\n";
+			cout << "moveSnakeRaw: POSTcurrSnake BODY "
+				 << postTablero["board"]["snakes"][currSnakeIndex]["body"]
+				 << "\n";
+		}
+		//---FIN DEBUG---
 
 		return postTablero;
 	}
