@@ -1,8 +1,7 @@
 ## Sobre este proyecto:
-
 Instrucciones de uso:
 
-- La serpiente, por lo menos, corre. Para ello, es necesario ejecutar este código en Replit (link de invitación: https://replit.com/join/vmxygxlyzn-gebalassa) y así activar un servidor, el cual enviará y recibirá instrucciones desde Battlesnake mediante una *URL*. De ejecutarse correctamente, se abrirá un *preview* encima de la consola mostrando la página con un pequeño diccionario *JSON*.
+- Para correr la serpiente, es necesario ejecutar este código en Replit (link de invitación: https://replit.com/join/vmxygxlyzn-gebalassa) y así activar un servidor, el cual enviará y recibirá instrucciones desde Battlesnake mediante una *URL*. De ejecutarse correctamente, se abrirá un *preview* encima de la consola mostrando la página con un pequeño diccionario *JSON*.
 - Para probar la serpiente, es necesario tener una cuenta en https://play.battlesnake.com/, y crear una partida estándar con *Create Game*. Allí es posible buscar y convocar nuestra serpiente, de color rojo, llamada "Lucius". Esperamos implementarla en un mapa "Medium" de 11x11, modo de juego **Standard** sin obstáculos (*hazards*), idealmente contra 1-3 serpientes enemigas (puede solicitarse cualquier serpiente disponible mediante el mismo sistema, incluyendo una al azar).
 - Si la serpiente muestra una **latencia** menor a 500ms y se mueve en más de una dirección, el servidor funciona.
 

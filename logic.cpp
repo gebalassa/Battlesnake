@@ -15,8 +15,9 @@ private:
 	json tablero;
 	// DEBUGGING
 	bool debug = true;
+	bool debugCrearHijo = true;
 	bool debugCrearHijos = true;
-	bool debugTotalSnakeMovementsRaw = true;
+	bool debugTotalSnakeMovementsRaw = false;
 	bool debug_TotalSnakeMovementsRaw = false;
 	bool debugMoveSnakeRaw = false;
 
@@ -24,7 +25,7 @@ private:
 		// Variables locales
 		Node nuevoHijo = Node(nuevoTablero, this);
 		hijos.push_back(nuevoHijo);
-		if (debug) {
+		if (debug && debugCrearHijo) {
 			cout << "Nuevo Hijo" << endl;
 		}
 	}
@@ -40,8 +41,9 @@ public:
 	// Creación de hijos (movimientos posibles)
 	void crearHijos() {
 		// VARS
-		vector<json> currentStates = {}; // Acá se agregan los tableros válidos
-		json nuevoTablero = tablero;	 // Acá va cada tablero a agregar
+		// vector<json> currentStates = {}; // Acá se agregan los tableros
+		// válidos json nuevoTablero = tablero;	 // Acá va cada tablero a
+		// agregar
 		int totalSerpientes = tablero["board"]["snakes"].size();
 		if (debug && debugCrearHijos) {
 			cout << "Entrando a rawMovementStates. Serpientes: "
@@ -52,11 +54,23 @@ public:
 		// ** El chequeo de validez y anti-suicida se hará después **
 		vector<json> rawMovementStates = totalSnakeMovementsRaw(tablero);
 		if (debug && debugCrearHijos) {
-			cout << "Salio de funcion rawMovementStates!!!"
+			cout << "Salio de funcion totalSnakeMovementsRaw!!!"
 				 << "\n";
 		}
 
-		// ***TERMINAR********
+		// Chequeo anti-choque con muros y con cuello
+		vector<json> validMovementStates = {};
+		for (int i = 0; i < rawMovementStates; i++) {
+			json currState = rawMovementStates[i];
+			if (chequearMuro(currState) && chequearColisionCuello(currState)) {
+				validMovementStates.push_back(currState);
+			}
+		}
+
+		// Creacion hijos
+		for (int i = 0; i < validMovementStates; i++) {
+			crearHijo(validMovementStates[i]);
+		}
 	}
 
 	// --------------Funciones de COMPROBACIÓN/CHEQUEO-----------------
@@ -92,7 +106,7 @@ public:
 			json currCabeza = currSnake["head"];
 			json currCuello = currSnake["body"][1];
 
-			if (currCabeza["x"] == currCuello["x"] ||
+			if (currCabeza["x"] == currCuello["x"] &&
 				currCabeza["y"] == currCuello["y"]) {
 				return false;
 			}
@@ -295,13 +309,20 @@ public:
 		  rootNode(Node(tableroInicial)) {
 	}
 
+    // ******FUNCION FUERTEMENTE SIMPLIFICADA USANDO HEURISTICA SIMPLE******
 	string nextMove() {
-		// string moves[4] = {"up", "down", "left", "right"};
+		// string moves[4] = {"up", "down", "left", "right"}; 
 		rootNode.crearHijos();
 
 		return "PLACEHOLDER";
 	}
 
+	// Retorna valor del nodo segun heuristica simple basada en vida y "distancia
+	// euclidiana a comida mas cercana VS oponente"
+	string returnSimpleHeuristicValue(Node node) {
+
+        return "PLACEHOLDER";        
+	}
 	// DEBUGGING
 	void debug() {
 		rootNode.debugNodoInfo();
