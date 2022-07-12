@@ -16,20 +16,21 @@ private:
 	json tablero;
 	// DEBUGGING
 	bool debug = true;
-	bool debugCrearHijo = true;
+	bool debugCrearHijo = false;
 	bool debugCrearHijos = false;
 	bool debugTotalSnakeMovementsRaw = false;
-	bool debug_TotalSnakeMovementsRaw = false;
+	bool debug_TotalSnakeMovementsRaw = true;
 	bool debugMoveSnakeRaw = false;
-    bool debugChequearMuro = true;
-    bool debugChequearColisionCuello = true;
+	bool debugChequearMuro = false;
+	bool debugChequearColisionCuello = false;
 
 	void crearHijo(json nuevoTablero) {
 		// Variables locales
 		Node nuevoHijo = Node(nuevoTablero, this);
 		hijos.push_back(nuevoHijo);
 		if (debug && debugCrearHijo) {
-			cout << "Nuevo Hijo" << endl;
+			cout << "CrearHijo:Nuevo Hijo. \"Head\": "
+				 << nuevoTablero["you"]["head"] << endl;
 		}
 	}
 
@@ -49,22 +50,35 @@ public:
 		// agregar
 		int totalSerpientes = tablero["board"]["snakes"].size();
 		if (debug && debugCrearHijos) {
-			cout << "Entrando a totalSnakeMovementsRaw. Serpientes: "
+			cout << "CrearHijos:Entrando a totalSnakeMovementsRaw. Serpientes: "
 				 << totalSerpientes << endl;
 		}
 		// Movimientos posibles por serpiente = 4
 		// Total de movimientos: 4^serpientes
 		// ** El chequeo de validez y anti-suicida se hará después **
 		vector<json> rawMovementStates = totalSnakeMovementsRaw(tablero);
+
+		// DEBUG---
 		if (debug && debugCrearHijos) {
-			cout << "Salio de funcion totalSnakeMovementsRaw!!!"
-				 << "\n";
+			cout << "CrearHijos:Salio de funcion totalSnakeMovementsRaw!!!"
+				 << "\n"
+				 << "CrearHijos:Largo de rawMovementStates:"
+				 << rawMovementStates.size() << "\n";
 		}
+		// FIN DEBUG---
 
 		// Chequeo anti-choque con muros y con cuello
 		vector<json> validMovementStates = {};
-		for (int i = 0; i < rawMovementStates; i++) {
+		for (int i = 0; i < rawMovementStates.size(); i++) {
 			json currState = rawMovementStates[i];
+
+			// DEBUG---
+			if (debug && debugCrearHijos) {
+				cout << "CrearHijos. i=" << i << " "
+					 << "Head: " << currState["you"]["head"] << endl;
+			}
+			// FIN DEBUG---
+
 			if (chequearMuro(currState) && chequearColisionCuello(currState)) {
 				validMovementStates.push_back(currState);
 			}
@@ -80,15 +94,16 @@ public:
 	// Chequeo de muros
 	bool chequearMuro(json tablero) {
 		int totalSerpientes = tablero["board"]["snakes"].size();
-		int stageWidth = tablero["board"]["width"];
-		int stageHeight = tablero["board"]["height"];
-        
-        //DEBUG----
+		int stageWidth = (int)tablero["board"]["width"];
+		int stageHeight = (int)tablero["board"]["height"];
+
+		// DEBUG----
 		if (debug && debugChequearMuro) {
-			cout << "CHEQUEAR MURO con HEAD en: " << tablero["you"]["head"] << endl;
+			cout << "CHEQUEAR MURO con HEAD en: " << tablero["you"]["head"]
+				 << endl;
 		}
-        //----FIN DEBUG-----
-        
+		//----FIN DEBUG-----
+
 		for (int i = 0; i < totalSerpientes; i++) {
 			json currSnake = tablero["board"]["snakes"][i];
 			if ((int)currSnake["head"]["x"] > stageWidth - 1) {
@@ -101,12 +116,13 @@ public:
 				return false;
 			}
 		}
-        //DEBUG----
+		// DEBUG----
 		if (debug && debugChequearMuro) {
-			cout << "Retornando TRUE con HEAD en: " << tablero["you"]["head"] << endl;
+			cout << "Retornando TRUE con HEAD en: " << tablero["you"]["head"]
+				 << endl;
 		}
-        //----FIN DEBUG-----
-        
+		//----FIN DEBUG-----
+
 		return true;
 	}
 
@@ -166,6 +182,16 @@ public:
 			currMovs.insert(currMovs.end(), nextMovs3.begin(), nextMovs3.end());
 			currMovs.insert(currMovs.end(), nextMovs4.begin(), nextMovs4.end());
 
+			//---DEBUG
+			if (debug && debug_TotalSnakeMovementsRaw) {
+				cout << "currMovs.size(): " << currMovs.size() << endl;
+				cout << "currMovs Movs1head1: " << currMovs[0]["you"]["head"]
+					 << endl;
+				cout << "currMovs Movs2head1: " << currMovs[1]["you"]["head"]
+					 << endl;
+			}
+			//--FINDEBUG
+
 			return currMovs;
 		} else { /*ES hoja*/
 			vector<json> myMoves = {};
@@ -174,6 +200,17 @@ public:
 			myMoves.push_back(movs3);
 			myMoves.push_back(movs4);
 			currMovs.insert(currMovs.end(), myMoves.begin(), myMoves.end());
+
+			//---DEBUG
+			if (debug && debug_TotalSnakeMovementsRaw) {
+				cout << "mymoves.size(): " << myMoves.size() << endl;
+				cout << "mymoves head1: " << myMoves[0]["you"]["head"] << endl;
+				cout << "mymoves head2: " << myMoves[1]["you"]["head"] << endl;
+				cout << "mymoves head3: " << myMoves[2]["you"]["head"] << endl;
+				cout << "mymoves head4: " << myMoves[3]["you"]["head"] << endl;
+			}
+            //---FINDEBUG
+
 			return currMovs;
 		}
 	}
@@ -224,6 +261,7 @@ public:
 		int currSnakeIndex;
 		for (int i = 0; i < totalSerpientes; i++) {
 			if (tablero["board"]["snakes"][i]["id"] == currSnake["id"]) {
+                
 				//---DEBUG---
 				if (debug && debugMoveSnakeRaw) {
 					cout << "moveSnakeRaw:ID: "
@@ -232,6 +270,7 @@ public:
 						 << endl;
 				}
 				//---FIN DEBUG---
+                
 				currSnakeIndex = i;
 				break;
 			}
