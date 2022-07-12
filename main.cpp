@@ -60,4 +60,6 @@ int main(void) {
 		svr.listen("0.0.0.0", 8080);
 		cout << "Server started";
 	}
+
+    return 0;
 }
