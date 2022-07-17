@@ -184,10 +184,13 @@ public:
 
 			//---DEBUG
 			if (debug && debug_TotalSnakeMovementsRaw) {
+				cout << "currMovs snakeIndex: " << snakeIndex << endl;
 				cout << "currMovs.size(): " << currMovs.size() << endl;
-				cout << "currMovs Movs1head1: " << currMovs[0]["you"]["head"]
+				cout << "currMovs Movs1head1: "
+					 << currMovs[0]["board"]["snakes"][snakeIndex]["head"]
 					 << endl;
-				cout << "currMovs Movs2head1: " << currMovs[1]["you"]["head"]
+				cout << "currMovs Movs2head1: "
+					 << currMovs[1]["board"]["snakes"][snakeIndex]["head"]
 					 << endl;
 			}
 			//--FINDEBUG
@@ -203,13 +206,22 @@ public:
 
 			//---DEBUG
 			if (debug && debug_TotalSnakeMovementsRaw) {
+                cout << "mymoves snakeIndex: " << snakeIndex << endl;
 				cout << "mymoves.size(): " << myMoves.size() << endl;
-				cout << "mymoves head1: " << myMoves[0]["you"]["head"] << endl;
-				cout << "mymoves head2: " << myMoves[1]["you"]["head"] << endl;
-				cout << "mymoves head3: " << myMoves[2]["you"]["head"] << endl;
-				cout << "mymoves head4: " << myMoves[3]["you"]["head"] << endl;
+				cout << "mymoves head1: "
+					 << myMoves[0]["board"]["snakes"][snakeIndex]["head"]
+					 << endl;
+				cout << "mymoves head2: "
+					 << myMoves[1]["board"]["snakes"][snakeIndex]["head"]
+					 << endl;
+				cout << "mymoves head3: "
+					 << myMoves[2]["board"]["snakes"][snakeIndex]["head"]
+					 << endl;
+				cout << "mymoves head4: "
+					 << myMoves[3]["board"]["snakes"][snakeIndex]["head"]
+					 << endl;
 			}
-            //---FINDEBUG
+			//---FINDEBUG
 
 			return currMovs;
 		}
@@ -261,7 +273,6 @@ public:
 		int currSnakeIndex;
 		for (int i = 0; i < totalSerpientes; i++) {
 			if (tablero["board"]["snakes"][i]["id"] == currSnake["id"]) {
-                
 				//---DEBUG---
 				if (debug && debugMoveSnakeRaw) {
 					cout << "moveSnakeRaw:ID: "
@@ -270,7 +281,7 @@ public:
 						 << endl;
 				}
 				//---FIN DEBUG---
-                
+
 				currSnakeIndex = i;
 				break;
 			}
@@ -327,6 +338,13 @@ public:
 		// Remover cola
 		postTablero["board"]["snakes"][currSnakeIndex]["body"].erase(
 			postTablero["board"]["snakes"][currSnakeIndex]["body"].size() - 1);
+
+		// Actualizar llave "you"
+		// (Sólo aplicar si el movimiento es de MÍ
+		// serpiente!)
+		if (currSnake["id"] == postTablero["you"]["id"]) {
+			postTablero["you"] = postTablero["board"]["snakes"][currSnakeIndex];
+		}
 
 		//---DEBUG---
 		if (debug && debugMoveSnakeRaw) {
