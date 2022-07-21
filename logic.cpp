@@ -17,9 +17,9 @@ private:
 	// DEBUGGING
 	bool debug = true;
 	bool debugCrearHijo = false;
-	bool debugCrearHijos = false;
+	bool debugCrearHijos = true;
 	bool debugTotalSnakeMovementsRaw = false;
-	bool debug_TotalSnakeMovementsRaw = true;
+	bool debug_TotalSnakeMovementsRaw = false;
 	bool debugMoveSnakeRaw = false;
 	bool debugChequearMuro = false;
 	bool debugChequearColisionCuello = false;
@@ -74,8 +74,11 @@ public:
 
 			// DEBUG---
 			if (debug && debugCrearHijos) {
-				cout << "CrearHijos. i=" << i << " "
-					 << "Head: " << currState["you"]["head"] << endl;
+				cout << "CrearHijos. i=" << i << endl;
+				for (int i = 0; i < totalSerpientes; i++) {
+					cout << "SerpHead " << i << ": "
+						 << currState["board"]["snakes"][i]["head"] << endl;
+				}
 			}
 			// FIN DEBUG---
 
@@ -93,19 +96,26 @@ public:
 	// --------------Funciones de COMPROBACIÓN/CHEQUEO-----------------
 	// Chequeo de muros
 	bool chequearMuro(json tablero) {
+		//---DEBUG----
+		if (debug && debugChequearMuro) {
+			cout << "chequearMuro: INICIANDO CHECK MURO:" << endl;
+		}
+		//---FIN DEBUG----
+
 		int totalSerpientes = tablero["board"]["snakes"].size();
 		int stageWidth = (int)tablero["board"]["width"];
 		int stageHeight = (int)tablero["board"]["height"];
 
-		// DEBUG----
-		if (debug && debugChequearMuro) {
-			cout << "CHEQUEAR MURO con HEAD en: " << tablero["you"]["head"]
-				 << endl;
-		}
-		//----FIN DEBUG-----
-
 		for (int i = 0; i < totalSerpientes; i++) {
 			json currSnake = tablero["board"]["snakes"][i];
+
+			//---DEBUG
+			if (debug && debugChequearMuro) {
+				cout << "CHEQUEAR MURO con HEAD en: " << currSnake["head"]
+					 << endl;
+			}
+			//---FIN DEBUG
+
 			if ((int)currSnake["head"]["x"] > stageWidth - 1) {
 				return false;
 			} else if ((int)currSnake["head"]["y"] > stageHeight - 1) {
@@ -116,10 +126,10 @@ public:
 				return false;
 			}
 		}
+
 		// DEBUG----
 		if (debug && debugChequearMuro) {
-			cout << "Retornando TRUE con HEAD en: " << tablero["you"]["head"]
-				 << endl;
+			cout << "Retornando TRUE" << endl;
 		}
 		//----FIN DEBUG-----
 
@@ -206,7 +216,7 @@ public:
 
 			//---DEBUG
 			if (debug && debug_TotalSnakeMovementsRaw) {
-                cout << "mymoves snakeIndex: " << snakeIndex << endl;
+				cout << "mymoves snakeIndex: " << snakeIndex << endl;
 				cout << "mymoves.size(): " << myMoves.size() << endl;
 				cout << "mymoves head1: "
 					 << myMoves[0]["board"]["snakes"][snakeIndex]["head"]
