@@ -5,11 +5,11 @@ using namespace std;
 #include "./json.hpp"
 #include "logic.cpp"
 #include <iostream>
-//using namespace nlohmann;
+// using namespace nlohmann;
 
 int main(void) {
-    bool activateServer = true;
-    if (activateServer) {
+	bool activateServer = true;
+	if (activateServer) {
 		httplib::Server svr;
 		svr.Get("/", [](const auto &, auto &res) {
 			string head = "default";  // TODO: Change head
@@ -31,7 +31,7 @@ int main(void) {
 		svr.Post("/move", [](auto &req, auto &res) {
 			const json data = json::parse(req.body);
 			//(cout << data;
-			//cout << "\n\n";
+			// cout << "\n\n";
 
 			// vARIABLES NUEVAS
 			// AQUI--------------------------------------------------
@@ -49,17 +49,14 @@ int main(void) {
 			// ESCRIBIR CÓDIGO NUEVO AQUÍ -------------------------------
 			// tree.debugJSON();
 			string newMove = "";
-			tree.nextMove();
-			//---------------------
-			int index = rand() % 4; // LO QUE HAY QUE SACAR
+			newMove = tree.nextMove();
 			//-----------------------------------------------------------
 
-			res.set_content(
-				"{\"move\": \"" + moves[index] + "\"}", "text/plain");
+			res.set_content("{\"move\": \"" + newMove + "\"}", "text/plain");
 		});
 		svr.listen("0.0.0.0", 8080);
 		cout << "Server started";
 	}
 
-    return 0;
+	return 0;
 }

@@ -15,14 +15,14 @@ private:
 	vector<Node> hijos;
 	json tablero;
 	// DEBUGGING
-	bool debug = true;
+	bool debug = false;
 	bool debugCrearHijo = false;
 	bool debugCrearHijos = true;
 	bool debugTotalSnakeMovementsRaw = false;
 	bool debug_TotalSnakeMovementsRaw = false;
 	bool debugMoveSnakeRaw = false;
 	bool debugChequearMuro = false;
-	bool debugChequearColisionCuello = false;
+	bool debugChequearColisionCuello = true;
 
 	void crearHijo(json nuevoTablero) {
 		// Variables locales
@@ -49,10 +49,13 @@ public:
 		// válidos json nuevoTablero = tablero;	 // Acá va cada tablero a
 		// agregar
 		int totalSerpientes = tablero["board"]["snakes"].size();
+		// DEBUG---
 		if (debug && debugCrearHijos) {
 			cout << "CrearHijos:Entrando a totalSnakeMovementsRaw. Serpientes: "
 				 << totalSerpientes << endl;
 		}
+		//--FIN DEBUG-----
+
 		// Movimientos posibles por serpiente = 4
 		// Total de movimientos: 4^serpientes
 		// ** El chequeo de validez y anti-suicida se hará después **
@@ -86,6 +89,13 @@ public:
 				validMovementStates.push_back(currState);
 			}
 		}
+
+		//---DEBUG
+		if (debug && debugCrearHijos) {
+			cout << "CrearHijos validMovementStates: "
+				 << validMovementStates.size() << endl;
+		}
+		//--FIN DEBUG
 
 		// Creacion hijos
 		for (int i = 0; i < validMovementStates.size(); i++) {
@@ -146,6 +156,16 @@ public:
 			json currSnake = tablero["board"]["snakes"][i];
 			json currCabeza = currSnake["head"];
 			json currCuello = currSnake["body"][1];
+
+			//---DEBUG
+			if (debug && debugChequearColisionCuello) {
+				cout << "cheqColcuello currSnake: " << currSnake["name"]
+					 << endl;
+				cout << "cheqColCuello head: " << currSnake["head"] << endl;
+				cout << "cheqColCuello Cuello: " << currSnake["body"][1]
+					 << endl;
+				//--- FIN DEBUG
+			}
 
 			if ((int)currCabeza["x"] == (int)currCuello["x"] &&
 				(int)currCabeza["y"] == (int)currCuello["y"]) {
@@ -396,6 +416,7 @@ class MonteCarloSearchTree {
 	Node rootNode;
 	// debug
 	bool debugNextMove = true;
+	bool debugSimpleHeuristicValue = true;
 
 public:
 	MonteCarloSearchTree(json _tablero, int _maxDepth)
@@ -427,6 +448,7 @@ public:
 			float currValor = returnSimpleHeuristicValue(currNodo);
 			if (currValor > mejorValor) {
 				currBestNode = currNodo;
+				mejorValor = currValor;
 			}
 		}
 
@@ -460,6 +482,16 @@ public:
 				 << endl;
 		}
 
+		//---DEBUG---
+		if (debugNextMove) {
+			cout << "DiffX=" << diffX << endl;
+			cout << "DiffY=" << diffY << endl;
+			cout << "Direction: " << stringMovimiento << endl;
+
+			cout << endl;
+		}
+		//--- FIN DEBUG---
+
 		return stringMovimiento;
 	}
 
@@ -470,12 +502,19 @@ public:
 		int mySnakeHeadX = node.getTablero()["you"]["head"]["x"];
 		int mySnakeHeadY = node.getTablero()["you"]["head"]["y"];
 
+		//---DEBUG---
+		if (debugSimpleHeuristicValue) {
+			cout << "SHV myheadX = " << mySnakeHeadX << endl;
+			cout << "SHV myheadY = " << mySnakeHeadY << endl;
+		}
+		//---FIN DEBUG---
+
 		// Vida actual
 		int currHealth = node.getTablero()["you"]["health"];
 
 		// Oponente + cercano
 		float shortestDistanceSquared = 9999999;
-		string closestSnake = {};
+		json closestSnake = {};
 
 		for (int i = 0; i < totalSerpientes; i++) {
 			json currSnake = node.getTablero()["board"]["snakes"][i];
@@ -521,12 +560,12 @@ public:
 			(float)pow(
 				(int)enemySnake["head"]["x"] - (int)closestFood["x"], 2) +
 			(float)pow((int)enemySnake["head"]["y"] - (int)closestFood["y"], 2);
-		// Estoy mas cerca de la comida que mi enemigo = menos relevante, y
+		// Estoy mas cerca de la comida que mi enemigo = MÁS relevante, y
 		// vice-versa
 		if (shortestDistanceSquaredFood < enemyFoodDistanceSquared) {
-			competitiveDistanceFactor = 0;
-		} else {
 			competitiveDistanceFactor = 1;
+		} else {
+			competitiveDistanceFactor = 0;
 		}
 
 		// Normalizacion entre 0 y 1
